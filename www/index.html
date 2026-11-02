@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panel</title>
+<style>
+  :root {
+    --bg: #0b0b0f;
+    --card: #16161d;
+    --borde: #2a2a35;
+    --texto: #f2f2f7;
+    --sub: #9a9aa8;
+    --acento: #7c4dff;
+    --fs: 16px;
+    --fuente: -apple-system, Helvetica, Arial, sans-serif;
+  }
+  body.claro {
+    --bg: #f2f2f7;
+    --card: #ffffff;
+    --borde: #d8d8e0;
+    --texto: #111118;
+    --sub: #6b6b78;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--texto);
+    font-family: var(--fuente);
+    font-size: var(--fs);
+    overflow-x: hidden;
+  }
+  body {
+    min-height: 100vh;
+    padding: calc(20px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px)) 16px;
+    transition: background 0.25s, color 0.25s;
+  }
+  body.sin-anim * { transition: none !important; }
+  .cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  h1 { font-size: 1.6em; margin: 0; }
+  #reloj {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: var(--acento);
+    display: none;
+  }
+  .tarjeta {
+    background: var(--card);
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    padding: 6px 16px;
+    margin-bottom: 16px;
+  }
+  .titulo-seccion {
+    font-size: 0.8em;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--sub);
+    margin: 18px 4px 8px 4px;
+  }
+  .fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 56px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--borde);
+  }
+  .fila:last-child { border-bottom: none; }
+  .fila.columna { flex-direction: column; align-items: stretch; }
+  .nombre { font-weight: 600; }
+  .detalle { font-size: 0.85em; color: var(--sub); margin-top: 2px; }
+  .valor { color: var(--acento); font-weight: 700; }
+  .switch { position: relative; width: 56px; height: 32px; flex-shrink: 0; }
+  .switch input {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    margin: 0;
+    opacity: 0;
+    z-index: 2;
+  }
+  .pista {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--borde);
+    border-radius: 32px;
+    transition: background 0.2s;
+  }
+  .pista::before {
+    content: "";
+    position: absolute;
+    width: 26px; height: 26px;
+    left: 3px; top: 3px;
+    background: #ffffff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+  }
+  .switch input:checked + .pista { background: var(--acento); }
+  .switch input:checked + .pista::before { transform: translateX(24px); }
+  input[type=range] {
+    width: 100%;
+    height: 32px;
+    accent-color: var(--acento);
+    margin: 6px 0 0 0;
+  }
+  select {
+    min-height: 44px;
+    padding: 0 12px;
+    font-size: 1em;
+    color: var(--texto);
+    background: var(--bg);
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+  }
+  .colores { display: flex; gap: 12px; margin-top: 10px; }
+  .color {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    padding: 0;
+  }
+  .color.activo { border-color: var(--texto); }
+  .boton {
+    width: 100%;
+    min-height: 52px;
+    border: none;
+    border-radius: 14px;
+    background: var(--acento);
+    color: #ffffff;
+    font-size: 1.05em;
+    font-weight: 700;
+    font-family: inherit;
+  }
+  .boton:active { opacity: 0.8; }
+  .boton.sec {
+    background: transparent;
+    color: var(--texto);
+    border: 1px solid var(--borde);
+    margin-top: 10px;
+  }
+  #estado {
+    text-align: center;
+    color: var(--sub);
+    font-size: 0.9em;
+    min-height: 22px;
+    margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="cabecera">
+  <h1>Panel</h1>
+  <div id="reloj">--:--:--</div>
+</div>
+
+<div class="titulo-seccion">Apariencia</div>
+<div class="tarjeta">
+  <div class="fila">
+    <div>
+      <div class="nombre">Modo oscuro</div>
+      <div class="detalle">Cambia entre fondo oscuro y claro</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="oscuro">
+      <span class="pista"></span>
+    </label>
+  </div>
+  <div class="fila">
+    <div>
+      <div class="nombre">Animaciones</div>
+      <div class="detalle">Transiciones suaves en el panel</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="anim">
+      <span class="pista"></span>
+    </label>
+  </div>
+  <div class="fila">
+    <div>
+      <div class="nombre">Mostrar reloj</div>
+      <div class="detalle">Hora en la esquina superior</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="reloj-sw">
+      <span class="pista"></span>
+    </label>
+  </div>
+  <div class="fila columna">
+    <div class="nombre">Color de acento</div>
+    <div class="colores" id="colores">
+      <button class="color" data-color="#7c4dff" style="background:#7c4dff" aria-label="Violeta"></button>
+      <button class="color" data-color="#ff1744" style="background:#ff1744" aria-label="Rojo"></button>
+      <button class="color" data-color="#00e676" style="background:#00e676" aria-label="Verde"></button>
+      <button class="color" data-color="#2979ff" style="background:#2979ff" aria-label="Azul"></button>
+      <button class="color" data-color="#ffab00" style="background:#ffab00" aria-label="Ámbar"></button>
+    </div>
+  </div>
+</div>
+
+<div class="titulo-seccion">Pantalla</div>
+<div class="tarjeta">
+  <div class="fila columna">
+    <div style="display:flex;justify-content:space-between">
+      <span class="nombre">Brillo</span>
+      <span class="valor" id="v-brillo">100%</span>
+    </div>
+    <input type="range" id="brillo" min="50" max="100" step="1">
+  </div>
+  <div class="fila columna">
+    <div style="display:flex;justify-content:space-between">
+      <span class="nombre">Tamaño de texto</span>
+      <span class="valor" id="v-texto">16 px</span>
+    </div>
+    <input type="range" id="texto" min="14" max="24" step="1">
+  </div>
+  <div class="fila">
+    <span class="nombre">Fuente</span>
+    <select id="fuente">
+      <option value="sans">Sans</option>
+      <option value="serif">Serif</option>
+      <option value="mono">Monoespaciada</option>
+    </select>
+  </div>
+</div>
+
+<button class="boton" id="btn-guardar">Guardar ajustes</button>
+<button class="boton sec" id="btn-reset">Restablecer</button>
+<div id="estado"></div>
+
+<script>
+(function () {
+  var CLAVE = "panel_ajustes_v1";
+  var FUENTES = {
+    sans: "-apple-system, Helvetica, Arial, sans-serif",
+    serif: "Georgia, 'Times New Roman', serif",
+    mono: "Menlo, Courier, monospace"
+  };
+  var POR_DEFECTO = {
+    oscuro: true, anim: true, reloj: false,
+    brillo: 100, texto: 16, fuente: "sans", acento: "#7c4dff"
+  };
+  var est = {};
+  var timerReloj = null;
+
+  var el = {
+    oscuro: document.getElementById("oscuro"),
+    anim: document.getElementById("anim"),
+    relojSw: document.getElementById("reloj-sw"),
+    reloj: document.getElementById("reloj"),
+    brillo: document.getElementById("brillo"),
+    vBrillo: document.getElementById("v-brillo"),
+    texto: document.getElementById("texto"),
+    vTexto: document.getElementById("v-texto"),
+    fuente: document.getElementById("fuente"),
+    colores: document.getElementById("colores"),
+    estado: document.getElementById("estado")
+  };
+
+  function copiar(o) {
+    var r = {};
+    for (var k in o) { r[k] = o[k]; }
+    return r;
+  }
+
+  function cargar() {
+    est = copiar(POR_DEFECTO);
+    try {
+      var g = localStorage.getItem(CLAVE);
+      if (g) {
+        var o = JSON.parse(g);
+        for (var k in o) { if (k in est) { est[k] = o[k]; } }
+      }
+    } catch (e) {}
+  }
+
+  function guardar() {
+    try {
+      localStorage.setItem(CLAVE, JSON.stringify(est));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function mensaje(t) {
+    el.estado.textContent = t;
+    clearTimeout(mensaje.t);
+    mensaje.t = setTimeout(function () { el.estado.textContent = ""; }, 2500);
+  }
+
+  function actualizarReloj() {
+    var d = new Date();
+    function dos(n) { return (n < 10 ? "0" : "") + n; }
+    el.reloj.textContent = dos(d.getHours()) + ":" + dos(d.getMinutes()) + ":" + dos(d.getSeconds());
+  }
+
+  function aplicar() {
+    document.body.classList.toggle("claro", !est.oscuro);
+    document.body.classList.toggle("sin-anim", !est.anim);
+    document.documentElement.style.setProperty("--acento", est.acento);
+    document.documentElement.style.setProperty("--fs", est.texto + "px");
+    document.documentElement.style.setProperty("--fuente", FUENTES[est.fuente] || FUENTES.sans);
+    document.documentElement.style.filter = "brightness(" + (est.brillo / 100) + ")";
+
+    el.oscuro.checked = est.oscuro;
+    el.anim.checked = est.anim;
+    el.relojSw.checked = est.reloj;
+    el.brillo.value = est.brillo;
+    el.vBrillo.textContent = est.brillo + "%";
+    el.texto.value = est.texto;
+    el.vTexto.textContent = est.texto + " px";
+    el.fuente.value = est.fuente;
+
+    var botones = el.colores.querySelectorAll(".color");
+    for (var i = 0; i < botones.length; i++) {
+      botones[i].classList.toggle("activo", botones[i].getAttribute("data-color") === est.acento);
+    }
+
+    clearInterval(timerReloj);
+    if (est.reloj) {
+      el.reloj.style.display = "block";
+      actualizarReloj();
+      timerReloj = setInterval(actualizarReloj, 1000);
+    } else {
+      el.reloj.style.display = "none";
+    }
+  }
+
+  function cambio() {
+    aplicar();
+    guardar();
+  }
+
+  el.oscuro.addEventListener("change", function () { est.oscuro = el.oscuro.checked; cambio(); });
+  el.anim.addEventListener("change", function () { est.anim = el.anim.checked; cambio(); });
+  el.relojSw.addEventListener("change", function () { est.reloj = el.relojSw.checked; cambio(); });
+  el.brillo.addEventListener("input", function () { est.brillo = parseInt(el.brillo.value, 10); cambio(); });
+  el.texto.addEventListener("input", function () { est.texto = parseInt(el.texto.value, 10); cambio(); });
+  el.fuente.addEventListener("change", function () { est.fuente = el.fuente.value; cambio(); });
+
+  el.colores.addEventListener("click", function (ev) {
+    var c = ev.target.getAttribute("data-color");
+    if (c) { est.acento = c; cambio(); }
+  });
+
+  document.getElementById("btn-guardar").addEventListener("click", function () {
+    mensaje(guardar() ? "Ajustes guardados" : "No se pudo guardar en este navegador");
+  });
+
+  document.getElementById("btn-reset").addEventListener("click", function () {
+    est = copiar(POR_DEFECTO);
+    aplicar();
+    guardar();
+    mensaje("Ajustes restablecidos");
+  });
+
+  cargar();
+  aplicar();
+})();
+</script>
+</body>
+</html>
